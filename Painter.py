@@ -5,6 +5,7 @@
 import random;
 import gpiod;
 import time;
+import math;
 
 
 PI = 3.14159;
@@ -111,8 +112,18 @@ class Painter(object):
 		for i in range(0, 20):
 			self.XMotor.Move(10);
 			self.YMotor.Move(10);
-		
+			
+	def PaintCircle(self):
+		print("paint circle");
+		r = 100;
+		self.XMotor.SetForward();
+		self.YMotor.SetForward();
+		for i in range(0, 360):
+			self.XMotor.Move(r * math.cos(math.radians(i)));
+			self.YMotor.Move(r * math.sin(math.radians(i)));
+	
 	def Main(self):
+		# Get commands section
 		commands = [];
 		creatingCommands = True;
 		while (creatingCommands):
@@ -141,33 +152,27 @@ class Painter(object):
 
 		    	else:
 				print("Command not recognized, type 'help' for help");
-
-			print("Starting to paint:");
-			print(commands);
-		
-			for command in commands:
-				print("Starting command:");
-				print(command);
 			
-		    	if (text == "line"):
+		# Painting section
+		print("Starting to paint:");
+		print(commands);
+
+		for command in commands:
+			print("Starting command:");
+			print(command);
+
+			if (command == "line"):
 				r = random.randrange(0,2,1);
 				if (r > 0.5):
 					self.PaintLineX();
 				else:
 					self.PaintLineY();
 
-		    	elif (text == "circle"):
-				self.Paint
+			elif (command == "circle"):
+				self.PaintCircle();
 
-		    	elif (text == "done"):
-				creatingCommands = False;
-
-		    	elif (text == "exit"):
-				commands.clear();
-				creatingCommands = False;
-
-		    	else:
-				print("Command not recognized, type 'help' for help");
+			else:
+				print("Error in the command, skipping");
 			
 		# Need to release lines at end
 		self.ReleaseAll();

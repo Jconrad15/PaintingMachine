@@ -105,7 +105,7 @@ class Painter(object):
 		self.YMotor.Move(100);
 		
 	def PaintDiagonal(self):
-		print("paint circle");
+		print("paint diagonal");
 		self.XMotor.SetForward();
 		self.YMotor.SetForward();
 		for i in range(0, 20):
@@ -113,20 +113,64 @@ class Painter(object):
 			self.YMotor.Move(10);
 		
 	def Main(self):
-		done = False;
-		iterations = 0;
+		commands = [];
+		creatingCommands = True;
+		while (creatingCommands):
+			text = input("Enter Command");
+
+		    	if (text == "help"):
+				print("'line' - paint a line");
+				print("'circle' - paint a circle");
+				print("'done' - finish adding commands");
+				print("'exit' - delete commands and quit");
+
+		    	elif (text == "line"):
+				commands.append("line");
+				print("Line added");
+
+		    	elif (text == "circle"):
+				commands.append("circle");
+				print("Circle added");
+
+		    	elif (text == "done"):
+				creatingCommands = False;
+
+			elif (text == "exit"):
+				commands.clear();
+				creatingCommands = False;
+
+		    	else:
+				print("Command not recognized, type 'help' for help");
+
+			print("Starting to paint:");
+			print(commands);
 		
-		while(done == False):
-			self.PaintLineX();
-			#self.PaintLineY();
-			iterations += 1;
+			for command in commands:
+				print("Starting command:");
+				print(command);
 			
-			if (iterations > 0):
-				done = True;
-		
+		    	if (text == "line"):
+				r = random.randrange(0,2,1);
+				if (r > 0.5):
+					self.PaintLineX();
+				else:
+					self.PaintLineY();
+
+		    	elif (text == "circle"):
+				self.Paint
+
+		    	elif (text == "done"):
+				creatingCommands = False;
+
+		    	elif (text == "exit"):
+				commands.clear();
+				creatingCommands = False;
+
+		    	else:
+				print("Command not recognized, type 'help' for help");
+			
 		# Need to release lines at end
 		self.ReleaseAll();
-
 
 
 p = Painter();

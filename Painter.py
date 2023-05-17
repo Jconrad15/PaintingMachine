@@ -40,9 +40,9 @@ class Motor(object):
 	# Need to determine how far the motors move given a pulseCount
 	def Move(self, distanceMM):
 		revolutions = distanceMM / circumference
-		print(revolutions);
+		# print(revolutions);
 		pulseCount = int(revolutions * 200);
-		print(pulseCount);
+		# print(pulseCount);
 		for i in range(0, pulseCount):
 			self.stepLine.set_value(1);
 			time.sleep(0.002);
@@ -94,16 +94,16 @@ class Painter(object):
 	def PaintLineX(self):
 		print("paint line X");
 		self.XMotor.SetForward();
-		self.XMotor.Move(100);
+		self.XMotor.Move(25);
 		self.XMotor.SetBackward();
-		self.XMotor.Move(100);
+		self.XMotor.Move(25);
 		
 	def PaintLineY(self):
 		print("paint line Y");
 		self.YMotor.SetForward();
-		self.YMotor.Move(100);
+		self.YMotor.Move(25);
 		self.YMotor.SetBackward();
-		self.YMotor.Move(100);
+		self.YMotor.Move(25);
 		
 	def PaintDiagonal(self):
 		print("paint diagonal");
@@ -115,65 +115,174 @@ class Painter(object):
 			
 	def PaintCircle(self):
 		print("paint circle");
-		r = 100;
+		r = 1;
 		self.XMotor.SetForward();
 		self.YMotor.SetForward();
-		for i in range(0, 360):
-			self.XMotor.Move(r * math.cos(math.radians(i)));
-			self.YMotor.Move(r * math.sin(math.radians(i)));
+		for i in range(0, 180):
+			xmovement = r * math.cos(math.radians(i));
+			ymovement = r * math.sin(math.radians(i));
+			print(str(xmovement) + " " + str(ymovement));
+			if (xmovement < 0):
+				self.XMotor.SetBackward();
+			else:
+				self.XMotor.SetForward();
+			
+			if (ymovement < 0):
+				self.YMotor.SetBackward();
+			else:
+				self.YMotor.SetForward();
+			
+			self.XMotor.Move(xmovement);
+			self.YMotor.Move(ymovement);
+	
+	def PaintLeft(self):
+		print("paint left");
+		self.YMotor.SetBackward();
+		self.YMotor.Move(25);
+	
+	def PaintRight(self):
+		print("paint right");
+		self.YMotor.SetForward();
+		self.YMotor.Move(25);
+	
+	def PaintUp(self):
+		print("paint up");
+		self.XMotor.SetBackward();
+		self.XMotor.Move(25);
+	
+	def PaintDown(self):
+		print("paint down");
+		self.XMotor.SetForward();
+		self.XMotor.Move(25);
+	
+	def PaintJitter(self):
+		print("paint jitter");
+		
+		for i in range(5, 10):
+			r = random.randrange(0,4,1);
+			if (r == 0):
+				self.XMotor.SetForward();
+				self.XMotor.Move(2);
+			elif (r == 1):
+				self.YMotor.SetForward();
+				self.YMotor.Move(2);
+			elif (r == 2):
+				self.XMotor.SetBackward();
+				self.XMotor.Move(2);
+			else:
+				self.YMotor.SetForward();
+				self.YMotor.Move(2);
 	
 	def Main(self):
-		# Get commands section
-		commands = [];
-		creatingCommands = True;
-		while (creatingCommands):
-			text = input("Enter Command");
+		
+		isPainting = True;
+		while (isPainting):
+			# Get commands section
+			commands = [];
+			creatingCommands = True;
+			while (creatingCommands):
+				text = input("Enter Command: \n");
 
-		    	if (text == "help"):
-				print("'line' - paint a line");
-				print("'circle' - paint a circle");
-				print("'done' - finish adding commands");
-				print("'exit' - delete commands and quit");
+				if (text == "help"):
+					print("'line' - paint a line");
+					print("'circle' - paint a circle");
+					print("'left' - paint towards the left");
+					print("'right' - paint towards the right");
+					print("'up' - paint upwards");
+					print("'down' - paint downwards");
+					print("'jitter' - randomized brush movement");
+					print("'done' - finish adding commands");
+					print("'exit' - delete commands and quit");
 
-		    	elif (text == "line"):
-				commands.append("line");
-				print("Line added");
+				elif (text == "line"):
+					commands.append("line");
+					print("Line added  \n");
 
-		    	elif (text == "circle"):
-				commands.append("circle");
-				print("Circle added");
+				elif (text == "circle"):
+					commands.append("circle");
+					print("Circle added  \n");
 
-		    	elif (text == "done"):
-				creatingCommands = False;
+				elif (text == "done"):
+					creatingCommands = False;
 
-			elif (text == "exit"):
-				commands.clear();
-				creatingCommands = False;
+				elif (text == "exit"):
+					commands.clear();
+					creatingCommands = False;
+					isPainting = False;
+					
+				elif (text == "right"):
+					commands.append("right");
+					print("Right added \n");
+					
+				elif (text == "left"):
+					commands.append("left");
+					print("Left added \n");
+					
+				elif (text == "up"):
+					commands.append("up");
+					print("Up added \n");
+					
+				elif (text == "down"):
+					commands.append("down");
+					print("Down added \n");
 
-		    	else:
-				print("Command not recognized, type 'help' for help");
-			
-		# Painting section
-		print("Starting to paint:");
-		print(commands);
-
-		for command in commands:
-			print("Starting command:");
-			print(command);
-
-			if (command == "line"):
-				r = random.randrange(0,2,1);
-				if (r > 0.5):
-					self.PaintLineX();
+				elif (text == "jitter"):
+					commands.append("jitter");
+					print("Jitter added \n");
+					
+				elif (text == "pause"):
+					commands.append("pause");
+					print("Pause added \n");
+					
 				else:
-					self.PaintLineY();
+					print("Command not recognized, type 'help' for help \n");
+				
+			# Painting section
+			print("Starting to paint: \n");
+			print(commands);
 
-			elif (command == "circle"):
-				self.PaintCircle();
+			for command in commands:
 
-			else:
-				print("Error in the command, skipping");
+				if (command == "line"):
+					r = random.randrange(0,2,1);
+					if (r > 0.5):
+						self.PaintLineX();
+					else:
+						self.PaintLineY();
+
+				elif (command == "circle"):
+					self.PaintCircle();
+
+				elif (command == "left"):
+					self.PaintLeft();
+					
+				elif (command == "right"):
+					self.PaintRight();
+					
+				elif (command == "up"):
+					self.PaintUp();
+					
+				elif (command == "down"):
+					self.PaintDown();
+				
+				elif (command == "jitter"):
+					self.PaintJitter();
+					
+				elif (command == "pause"):
+					print("Pause for 1 second");
+					time.sleep(1);
+
+				else:
+					print("Error in the command, skipping");
 			
+			# Check if done painting
+			doneCheck = input("\n Done? y/n \n");
+			if (doneCheck == "n"):
+				print("\n --- Continue --- \n");
+			else:
+				isPainting = False;
+			
+				
 		# Need to release lines at end
 		self.ReleaseAll();
 
